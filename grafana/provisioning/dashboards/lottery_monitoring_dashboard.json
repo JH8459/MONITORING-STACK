@@ -197,7 +197,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum by(container_label_com_docker_compose_service) (\n  rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_service=~\"$container\"}[5m])\n) * 100",
+          "expr": "sum by(container_label_com_docker_compose_service) (\n  rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_service=~\"$container|mariadb\"}[5m])\n) * 100",
           "legendFormat": "{{container_label_com_docker_compose_service}}",
           "range": true,
           "refId": "A"
@@ -293,7 +293,7 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
-          "expr": "container_memory_usage_bytes{container_label_com_docker_compose_service=~\"$container\"} / 1024 / 1024",
+          "expr": "container_memory_usage_bytes{container_label_com_docker_compose_service=~\"$container|mariadb\"} / 1024 / 1024",
           "legendFormat": "{{container_label_com_docker_compose_service}}",
           "refId": "B"
         }
@@ -389,7 +389,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum by(container_label_com_docker_compose_service) (\n  rate(container_network_transmit_bytes_total{container_label_com_docker_compose_service=~\"$container\"}[5m])\n)",
+          "expr": "sum by(container_label_com_docker_compose_service) (\n  rate(container_network_transmit_bytes_total{container_label_com_docker_compose_service=~\"$container|mariadb\"}[5m])\n)",
           "legendFormat": "{{container_label_com_docker_compose_service}}",
           "range": true,
           "refId": "C"
@@ -486,7 +486,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum by(container_label_com_docker_compose_service) (\n  rate(container_network_receive_bytes_total{container_label_com_docker_compose_service=~\"$container\"}[5m])\n)",
+          "expr": "sum by(container_label_com_docker_compose_service) (\n  rate(container_network_receive_bytes_total{container_label_com_docker_compose_service=~\"$container|mariadb\"}[5m])\n)",
           "legendFormat": "{{container_label_com_docker_compose_service}}",
           "range": true,
           "refId": "D"
@@ -494,146 +494,6 @@
       ],
       "title": "Network Receive (bytes/sec)",
       "type": "timeseries"
-    },
-    {
-      "type": "timeseries",
-      "title": "NAS CPU Usage (per core)",
-      "id": 1001,
-      "gridPos": {
-        "x": 0,
-        "y": 29,
-        "w": 12,
-        "h": 10
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
-      },
-      "targets": [
-        {
-          "expr": "100 - (avg by(cpu) (irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
-          "refId": "A",
-          "legendFormat": "CPU {{cpu}}"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "color": {
-            "mode": "palette-classic"
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "showLegend": true,
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      }
-    },
-    {
-      "type": "timeseries",
-      "title": "NAS Memory Usage",
-      "id": 1002,
-      "gridPos": {
-        "x": 12,
-        "y": 29,
-        "w": 12,
-        "h": 10
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
-      },
-      "targets": [
-        {
-          "expr": "(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100",
-          "refId": "A",
-          "legendFormat": "Used Memory (%)"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "color": {
-            "mode": "palette-classic"
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "showLegend": true,
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      }
-    },
-    {
-      "type": "stat",
-      "title": "Website Active Users (lottery_website)",
-      "id": 1003,
-      "gridPos": {
-        "x": 0,
-        "y": 39,
-        "w": 24,
-        "h": 6
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
-      },
-      "targets": [
-        {
-          "expr": "sum(container_netstat_Tcp_CurrEstab{container_label_com_docker_compose_service=\"lottery_website\"})",
-          "refId": "A"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "short",
-          "color": {
-            "mode": "thresholds"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 50
-              },
-              {
-                "color": "red",
-                "value": 100
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "orientation": "horizontal",
-        "textMode": "value"
-      }
     }
   ],
   "preload": false,
