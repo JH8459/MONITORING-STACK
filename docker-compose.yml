@@ -43,6 +43,26 @@ services:
       - /sys:/sys:ro
       - /volume1/@docker/:/var/lib/docker:ro
 
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/loki.yml
+    volumes:
+      - ./loki/loki.yml:/etc/loki/loki.yml
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    volumes:
+      - ./promtail/promtail.yml:/etc/promtail/promtail.yml
+      - /var/log:/var/log:ro
+      - /volume1/@docker/containers:/var/lib/docker/containers:ro
+    command: -config.file=/etc/promtail/promtail.yml
+    depends_on:
+      - loki
+
 volumes:
   prometheus_data:
   grafana_data:
