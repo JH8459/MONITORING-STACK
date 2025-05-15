@@ -4,6 +4,9 @@ server:
   http_listen_port: 3100
   grpc_listen_port: 9096
 
+common:
+  path_prefix: /tmp/loki
+
 ingester:
   lifecycler:
     ring:
@@ -15,7 +18,7 @@ ingester:
   chunk_retain_period: 30s
   wal:
     enabled: true
-    dir: /tmp/wal
+    dir: /tmp/loki/wal
 
 schema_config:
   configs:
@@ -33,3 +36,9 @@ storage_config:
     cache_location: /tmp/loki/cache
   filesystem:
     directory: /tmp/loki/chunks
+
+compactor:
+  working_directory: /tmp/loki/compactor
+
+limits_config:
+  allow_structured_metadata: false
