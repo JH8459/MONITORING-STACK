@@ -1,7 +1,4 @@
 {
-  "id": 2,
-  "uid": "lottery-monitoring",
-  "title": "Lottery Container Monitoring",
   "annotations": {
     "list": [
       {
@@ -21,8 +18,97 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
+  "id": 1,
   "links": [],
   "panels": [
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "P8E80F9AEF21F6940"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 5,
+      "options": {
+        "dedupStrategy": "none",
+        "enableInfiniteScrolling": false,
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "direction": "backward",
+          "editorMode": "builder",
+          "expr": "{container_service=\"lottery_api_server\"} |= ``",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Logs - API Server",
+      "type": "logs"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "P8E80F9AEF21F6940"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 6,
+      "options": {
+        "dedupStrategy": "none",
+        "enableInfiniteScrolling": false,
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "direction": "backward",
+          "editorMode": "builder",
+          "expr": "{container_service=\"lottery_crawler_server\"} |= ``",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Logs - Crawler",
+      "type": "logs"
+    },
     {
       "datasource": {
         "type": "prometheus",
@@ -87,7 +173,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 0
+        "y": 9
       },
       "id": 1,
       "options": {
@@ -184,7 +270,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 0
+        "y": 9
       },
       "id": 2,
       "options": {
@@ -279,7 +365,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 10
+        "y": 19
       },
       "id": 3,
       "options": {
@@ -376,7 +462,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 10
+        "y": 19
       },
       "id": 4,
       "options": {
@@ -410,123 +496,143 @@
       "type": "timeseries"
     },
     {
-      "type": "logs",
-      "title": "Logs - API Server",
+      "type": "timeseries",
+      "title": "NAS CPU Usage (per core)",
+      "id": 1001,
+      "gridPos": {
+        "x": 0,
+        "y": 29,
+        "w": 12,
+        "h": 10
+      },
       "datasource": {
-        "type": "loki",
-        "uid": "-- Mixed --"
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
       },
       "targets": [
         {
-          "expr": "{container_name=\"lottery_api_server\"}",
+          "expr": "100 - (avg by(cpu) (irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+          "refId": "A",
+          "legendFormat": "CPU {{cpu}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "NAS Memory Usage",
+      "id": 1002,
+      "gridPos": {
+        "x": 12,
+        "y": 29,
+        "w": 12,
+        "h": 10
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "targets": [
+        {
+          "expr": "(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100",
+          "refId": "A",
+          "legendFormat": "Used Memory (%)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Website Active Users (lottery_website)",
+      "id": 1003,
+      "gridPos": {
+        "x": 0,
+        "y": 39,
+        "w": 24,
+        "h": 6
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "targets": [
+        {
+          "expr": "sum(container_netstat_Tcp_CurrEstab{container_label_com_docker_compose_service=\"lottery_website\"})",
           "refId": "A"
         }
       ],
-      "options": {
-        "dedupStrategy": "none",
-        "enableLogDetails": true,
-        "showTime": true,
-        "wrapLogMessage": true
-      },
-      "gridPos": {
-        "x": 0,
-        "y": 20,
-        "w": 24,
-        "h": 9
-      },
       "fieldConfig": {
-        "defaults": {},
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 100
+              }
+            ]
+          }
+        },
         "overrides": []
-      }
-    },
-    {
-      "type": "logs",
-      "title": "Logs - Crawler",
-      "datasource": {
-        "type": "loki",
-        "uid": "-- Mixed --"
       },
-      "targets": [
-        {
-          "expr": "{container_name=\"lottery_crawler_server\"}",
-          "refId": "B"
-        }
-      ],
       "options": {
-        "dedupStrategy": "none",
-        "enableLogDetails": true,
-        "showTime": true,
-        "wrapLogMessage": true
-      },
-      "gridPos": {
-        "x": 0,
-        "y": 30,
-        "w": 24,
-        "h": 9
-      },
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      }
-    },
-    {
-      "type": "logs",
-      "title": "Logs - Website",
-      "datasource": {
-        "type": "loki",
-        "uid": "-- Mixed --"
-      },
-      "targets": [
-        {
-          "expr": "{container_name=\"lottery_website\"}",
-          "refId": "C"
-        }
-      ],
-      "options": {
-        "dedupStrategy": "none",
-        "enableLogDetails": true,
-        "showTime": true,
-        "wrapLogMessage": true
-      },
-      "gridPos": {
-        "x": 0,
-        "y": 40,
-        "w": 24,
-        "h": 9
-      },
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      }
-    },
-    {
-      "type": "logs",
-      "title": "Logs - Redis",
-      "datasource": {
-        "type": "loki",
-        "uid": "-- Mixed --"
-      },
-      "targets": [
-        {
-          "expr": "{container_name=\"lottery_redis\"}",
-          "refId": "D"
-        }
-      ],
-      "options": {
-        "dedupStrategy": "none",
-        "enableLogDetails": true,
-        "showTime": true,
-        "wrapLogMessage": true
-      },
-      "gridPos": {
-        "x": 0,
-        "y": 50,
-        "w": 24,
-        "h": 9
-      },
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "horizontal",
+        "textMode": "value"
       }
     }
   ],
@@ -558,5 +664,7 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "version": 1
+  "title": "Lottery Container Monitoring",
+  "uid": "lottery-monitoring",
+  "version": 2
 }
