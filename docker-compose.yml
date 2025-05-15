@@ -61,8 +61,7 @@ services:
     container_name: promtail
     volumes:
       - ./promtail/promtail.yml:/etc/promtail/promtail.yml
-      - /var/log:/var/log:ro
-      - /volume1/@docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     command: -config.file=/etc/promtail/promtail.yml
     depends_on:
       - loki
