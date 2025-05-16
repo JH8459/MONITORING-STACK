@@ -18,9 +18,131 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
+  "id": 2,
   "links": [],
   "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1001,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "expr": "100 - (avg by(cpu) (irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+          "legendFormat": "CPU {{cpu}}",
+          "refId": "A"
+        }
+      ],
+      "title": "NAS CPU Usage (per core)",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 1002,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "expr": "(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100",
+          "legendFormat": "Used Memory (%)",
+          "refId": "A"
+        }
+      ],
+      "title": "NAS Memory Usage",
+      "type": "stat"
+    },
     {
       "datasource": {
         "type": "loki",
@@ -34,7 +156,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 0
+        "y": 6
       },
       "id": 5,
       "options": {
@@ -78,7 +200,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 0
+        "y": 6
       },
       "id": 6,
       "options": {
@@ -173,7 +295,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 9
+        "y": 15
       },
       "id": 1,
       "options": {
@@ -197,7 +319,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum by(container_label_com_docker_compose_service) (\n  rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_service=~\"$container|mariadb\"}[5m])\n) * 100",
+          "expr": "sum by(container_label_com_docker_compose_service) (\n  rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_service=~\"$container\"}[5m])\n) * 100",
           "legendFormat": "{{container_label_com_docker_compose_service}}",
           "range": true,
           "refId": "A"
@@ -270,7 +392,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 9
+        "y": 15
       },
       "id": 2,
       "options": {
@@ -293,7 +415,7 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
-          "expr": "container_memory_usage_bytes{container_label_com_docker_compose_service=~\"$container|mariadb\"} / 1024 / 1024",
+          "expr": "container_memory_usage_bytes{container_label_com_docker_compose_service=~\"$container\"} / 1024 / 1024",
           "legendFormat": "{{container_label_com_docker_compose_service}}",
           "refId": "B"
         }
@@ -365,7 +487,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 19
+        "y": 25
       },
       "id": 3,
       "options": {
@@ -389,7 +511,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum by(container_label_com_docker_compose_service) (\n  rate(container_network_transmit_bytes_total{container_label_com_docker_compose_service=~\"$container|mariadb\"}[5m])\n)",
+          "expr": "sum by(container_label_com_docker_compose_service) (\n  rate(container_network_transmit_bytes_total{container_label_com_docker_compose_service=~\"$container\"}[5m])\n)",
           "legendFormat": "{{container_label_com_docker_compose_service}}",
           "range": true,
           "refId": "C"
@@ -462,7 +584,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 19
+        "y": 25
       },
       "id": 4,
       "options": {
@@ -486,7 +608,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum by(container_label_com_docker_compose_service) (\n  rate(container_network_receive_bytes_total{container_label_com_docker_compose_service=~\"$container|mariadb\"}[5m])\n)",
+          "expr": "sum by(container_label_com_docker_compose_service) (\n  rate(container_network_receive_bytes_total{container_label_com_docker_compose_service=~\"$container\"}[5m])\n)",
           "legendFormat": "{{container_label_com_docker_compose_service}}",
           "range": true,
           "refId": "D"
@@ -497,7 +619,7 @@
     }
   ],
   "preload": false,
-  "refresh": "10s",
+  "refresh": "30s",
   "schemaVersion": 41,
   "tags": [
     "lottery",
@@ -506,11 +628,18 @@
   "templating": {
     "list": [
       {
+        "current": {
+          "text": "All",
+          "value": [
+            "$__all"
+          ]
+        },
         "datasource": "Prometheus",
         "definition": "label_values(container_memory_usage_bytes{container_label_com_docker_compose_service=~\"lottery_.*\"}, container_label_com_docker_compose_service)",
         "includeAll": true,
         "multi": true,
         "name": "container",
+        "options": [],
         "query": "label_values(container_memory_usage_bytes{container_label_com_docker_compose_service=~\"lottery_.*\"}, container_label_com_docker_compose_service)",
         "refresh": 1,
         "sort": 1,
@@ -524,7 +653,7 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "Lottery Container Monitoring",
-  "uid": "lottery-monitoring",
+  "title": "Lottery Container Monitoring2",
+  "uid": "lottery-monitoring2",
   "version": 2
 }
