@@ -35,7 +35,10 @@ services:
     image: prom/mysqld-exporter:latest
     container_name: mariadb_exporter
     environment:
-      DATA_SOURCE_NAME: "exporter:exporter_password@(mariadb:3306)/"
+      - DATA_SOURCE_NAME: "exporter:exporter_password@(mariadb:3306)/"
+    command:
+      - "--mysqld.username=exporter:exporter_password"
+      - "--mysqld.address=mariadb:3306"
     
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.45.0
