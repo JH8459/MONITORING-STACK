@@ -32,6 +32,18 @@ services:
     container_name: node_exporter
     ports:
       - "5012:9100"
+
+  mariadb_exporter:
+    image: prom/mysqld-exporter
+    container_name: mariadb_exporter
+    ports:
+      - "9104:9104"
+    env_file:
+    - ./mariadb/.env
+    environment:
+      - DATA_SOURCE_NAME=${MYSQL_USER}:${MYSQL_PASSWORD}@(${MYSQL_HOST}:${MYSQL_PORT})/
+    depends_on:
+      - grafana
     
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.45.0
@@ -67,6 +79,8 @@ services:
     command: -config.file=/etc/promtail/promtail.yml
     depends_on:
       - loki
+
+  
 
 volumes:
   prometheus_data:
