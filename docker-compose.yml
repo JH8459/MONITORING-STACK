@@ -1,22 +1,22 @@
-version: '3.8'
-
 services:
   grafana:
-      image: grafana/grafana:latest
-      container_name: grafana
-      ports:
-        - "5010:3000"
-      volumes:
-      - grafana_data:/var/lib/grafana
-      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
-      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
-      - ./grafana/provisioning/dashboards:/var/lib/grafana/dashboards 
-      environment:
-        - GF_SECURITY_ADMIN_USER=admin
-        - GF_SECURITY_ADMIN_PASSWORD=admin
-      depends_on:
-        - prometheus
-        - loki
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "5010:3000"
+    volumes:
+    - grafana_data:/var/lib/grafana
+    - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+    - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+    - ./grafana/provisioning/dashboards:/var/lib/grafana/dashboards 
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - monitoring_net
+    depends_on:
+      - prometheus
+      - loki
 
   prometheus:
     image: prom/prometheus:latest
@@ -26,10 +26,14 @@ services:
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
+    networks:
+      - monitoring_net
 
   node_exporter:
     image: prom/node-exporter:latest
     container_name: node_exporter
+    networks:
+      - monitoring_net
 
   mariadb_exporter:
     image: prom/mysqld-exporter:latest
@@ -40,6 +44,7 @@ services:
       - "--mysqld.username=exporter:exporter_password"
       - "--mysqld.address=mariadb:3306"
     networks:
+      - monitoring_net
       - lottery_lottery_net
     
   cadvisor:
@@ -57,6 +62,8 @@ services:
       - /volume1/@docker/:/var/lib/docker:ro
       - /proc:/host/proc:ro
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    networks:
+      - monitoring_net
 
   loki:
     image: grafana/loki:latest
@@ -64,6 +71,8 @@ services:
     command: -config.file=/etc/loki/loki.yml
     volumes:
       - ./loki/loki.yml:/etc/loki/loki.yml
+    networks:
+      - monitoring_net
 
   promtail:
     image: grafana/promtail:latest
@@ -72,6 +81,8 @@ services:
       - ./promtail/promtail.yml:/etc/promtail/promtail.yml
       - /var/run/docker.sock:/var/run/docker.sock:ro
     command: -config.file=/etc/promtail/promtail.yml
+    networks:
+      - monitoring_net
     depends_on:
       - loki
 
@@ -80,5 +91,7 @@ volumes:
   grafana_data:
 
 networks:
+  monitoring_net:
+    external: true
   lottery_lottery_net:
     external: true
