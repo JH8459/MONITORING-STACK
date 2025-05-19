@@ -1,0 +1,77 @@
+name: CI & CD
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  deploy:
+    name: Deploy to NAS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Connect to NAS via SSH - Test Connection
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.NAS_HOST }}
+          username: ${{ secrets.NAS_USER }}
+          password: ${{ secrets.NAS_PASSWORD }}
+          port: ${{ secrets.NAS_PORT }}
+          script: echo "✅ NAS 접속 성공"
+
+      - name: Update Git Repository on NAS
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.NAS_HOST }}
+          username: ${{ secrets.NAS_USER }}
+          password: ${{ secrets.NAS_PASSWORD }}
+          port: ${{ secrets.NAS_PORT }}
+          script: |
+            cd /volume1/docker/monitor
+            echo "🌀 GitHub master 브랜치 최신화"
+            git fetch origin
+            git reset --hard origin/master
+
+      - name: Create .env files on NAS
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.NAS_HOST }}
+          username: ${{ secrets.NAS_USER }}
+          password: ${{ secrets.NAS_PASSWORD }}
+          port: ${{ secrets.NAS_PORT }}
+          script: |
+            cd /volume1/docker/monitor
+            echo "📦 .env 파일 생성 시작"
+            rm -f .env
+
+            cat <<EOF > .env
+            GF_SECURITY_ADMIN_USER=${{ secrets.GF_SECURITY_ADMIN_USER }}
+            GF_SECURITY_ADMIN_PASSWORD=${{ secrets.GF_SECURITY_ADMIN_PASSWORD }}
+            SLACK_WEBHOOK_URL=${{ secrets.SLACK_WEBHOOK_URL }}
+            EOF
+
+            echo "✅ .env 파일 생성 완료"
+
+      - name: Docker Build, Down, Up on NAS
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.NAS_HOST }}
+          username: ${{ secrets.NAS_USER }}
+          password: ${{ secrets.NAS_PASSWORD }}
+          port: ${{ secrets.NAS_PORT }}
+          script: |
+            cd /volume1/docker/lottery
+
+            echo "🐳 Docker 이미지 빌드"
+            /usr/local/bin/docker-compose build
+
+            echo "🧨 기존 컨테이너 중지 및 삭제"
+            /usr/local/bin/docker-compose down
+
+            echo "🚀 새 컨테이너 실행"
+            /usr/local/bin/docker-compose up -d
+
+            echo "🎉 배포 완료"
