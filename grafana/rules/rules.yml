@@ -1,10 +1,36 @@
-name: test-rule-group
-rules:
-  - alert: AlwaysFiring
-    expr: vector(1)
-    for: 10s
-    labels:
-      severity: info
-    annotations:
-      summary: 'Test Alert - Always firing'
-      description: 'This alert is always active. Used for testing Grafana alert integration.'
+groups:
+  - name: system_alerts
+    rules:
+      - uid: cpu_alert
+        title: Container CPU Usage
+        condition: B
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: PBFA97CFB590B2093
+            model:
+              expr: sum(rate(container_cpu_usage_seconds_total[5m])) > 0
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              type: classic_conditions
+              conditions:
+                - evaluator:
+                    params: [0]
+                    type: gt
+                  operator:
+                    type: and
+                  reducer:
+                    type: last
+                  type: query
+              refId: A
+        noDataState: NoData
+        execErrState: Alerting
+        for: 1m
+        annotations:
+          summary: 'Container CPU usage exceeded threshold'

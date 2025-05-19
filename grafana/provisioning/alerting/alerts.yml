@@ -1,8 +1,0 @@
-apiVersion: 1
-
-groups:
-  - name: test-alert-group
-    folder: 'Test Alerts'
-    interval: 1m
-    rules:
-      - /etc/grafana/rules/test-rule.yaml

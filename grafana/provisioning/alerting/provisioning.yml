@@ -1,0 +1,9 @@
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: system_alerts
+    folder: 'Alerts'
+    interval: 30s
+    rules:
+      - file: /etc/grafana/rules/rules.yml
