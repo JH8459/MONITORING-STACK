@@ -39,6 +39,8 @@ services:
     command:
       - "--mysqld.username=exporter:exporter_password"
       - "--mysqld.address=mariadb:3306"
+    networks:
+      - lottery_lottery_net
     
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.45.0
@@ -76,3 +78,7 @@ services:
 volumes:
   prometheus_data:
   grafana_data:
+
+networks:
+  lottery_lottery_net:
+    external: true
