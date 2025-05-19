@@ -1,0 +1,10 @@
+name: test-rule-group
+rules:
+  - alert: AlwaysFiring
+    expr: vector(1)
+    for: 10s
+    labels:
+      severity: info
+    annotations:
+      summary: 'Test Alert - Always firing'
+      description: 'This alert is always active. Used for testing Grafana alert integration.'
