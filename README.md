@@ -5,18 +5,18 @@ NAS에서 실행되고 있는 모든 컨테이너들과 하드웨어를 통합 �
 <br/>
 <br/>
 
-### Monitoring UI
+### DashBoard
 - **Grafana**
 
 <br/>
 
-### Metrics / Log Collector
+### DataBase
 - **Prometheus**
 - **Loki**
 
 <br/>
 
-### Exporter
+### Agents
 - `node_exporter`: 하드웨어 및 OS 수준의 메트릭을 수집.
 - `mariadb_exporter`: MariaDB의 내부 DB 상태 및 성능 지표를 수집.
 - `cadvisor`: Docker 컨테이너별 리소스 사용률 정보를 수집.
